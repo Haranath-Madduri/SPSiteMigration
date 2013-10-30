@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE MigrationAutomationConfiguration[]>
+<MigrationAutomationConfiguration>
+  <GlobalSettings>
+    <Databases>
+      <Database Name="Migration_Coordinator" ConnectionString="Server=mfha6tk8ej.database.windows.net;Database=Migration_Coordinator; UID=$($UserName);password=$($Password); Integrated Security=$false;Connect Timeout=180;">
+        <EncryptedAccount UserName="REDMOND\TK5-MYSFW-09\O365MA01" AccountName="O365MA01" Password="01000000d08c9ddf0115d1118c7a00c04fc297eb01000000446cb953048a784aa8c28a72969b62130000000002000000000003660000c000000010000000d4b9667e7a70cda010b0b8b9ad69d6920000000004800000a0000000100000008ee9a022cd8d1bf4d2e08b2e71893e4c28000000fe0d0cc9268e7d802ee351899348a031ae1dcd48f258ea26eb1d53f847567a4cf0e0e3ede531badf140000009a171a4d790499cdf80eef269acc3a665abb082c" />
+        <EncryptedAccount UserName="REDMOND\TK5-MYSFW-09\o365ma01" AccountName="o365MA01" Password="01000000d08c9ddf0115d1118c7a00c04fc297eb01000000446cb953048a784aa8c28a72969b62130000000002000000000003660000c000000010000000166dd66e97b83df8a8d8b9181db5696a0000000004800000a000000010000000ccfab75f7ab7133d9d3e5592fbc06e2b28000000ba3383d2660f764cce23792e84351c88234b055194302131f38dc1d4ea60d58550cd65306a4b70df140000001f920ef516c484e499a576f987c1f048a098aed3" />
+        <EncryptedAccount UserName="REDMOND\TK5-MYSFW-09\absh" AccountName="absh" Password="01000000d08c9ddf0115d1118c7a00c04fc297eb010000007ebaf76a6ae87e4cb8a7ac34c537c2900000000002000000000003660000c00000001000000087aafc329f5643fbfca6394e0d980b8c0000000004800000a00000001000000042b2c38a9f9eb04080500474b9f2ad5c18000000c1eb9e0ca333a7efc38777fe79a5119a026af6f278f44d8b140000005875c3158352a050538ebd46c912b40d324f35cd" />
+      </Database>
+    </Databases>
+    <SMTP HostName="SMTPHOST" FromEmail="SPOMComm@microsoft.com" AccountName="REDMOND\SPOMComm">
+      <EncryptedAccount UserName="REDMOND\TK5-MYSFW-09\O365MA01" Password="01000000d08c9ddf0115d1118c7a00c04fc297eb01000000446cb953048a784aa8c28a72969b62130000000002000000000003660000c0000000100000006fc21be779611d16b5b60a02becf32220000000004800000a000000010000000d52a31921f6f54b58b7d5e4a0b918e7218000000199c1ab7095d1c802777e94bafc7deb819430b45eda79b3c14000000a1fa4058239d81abec796716f65672a4624ad15e" />
+      <EncryptedAccount UserName="REDMOND\TK5-MYSFW-09\o365ma01" Password="01000000d08c9ddf0115d1118c7a00c04fc297eb01000000446cb953048a784aa8c28a72969b62130000000002000000000003660000c0000000100000006fc21be779611d16b5b60a02becf32220000000004800000a000000010000000d52a31921f6f54b58b7d5e4a0b918e7218000000199c1ab7095d1c802777e94bafc7deb819430b45eda79b3c14000000a1fa4058239d81abec796716f65672a4624ad15e" />
+    </SMTP>
+  </GlobalSettings>
+  <MigrationAutomation FarmName="http://SharePointEMEA" WebAppID="AAD0F941-DB37-40B0-83E8-8FD4915E2864">
+
+<!--Email setting-->
+
+    <MigrationSequence Name="FinalEmail" DBTrigger="check-ReadyForFinalEmail">
+      <Step Name="Send-EmailWithAllParameters" FailureSequence="RequiresAssistance" Parameters="template FinalEmail" />
+      <Step Name="Set-MigrationCompleteToNow" />
+    </MigrationSequence>
+
+    <MigrationSequence Name="InitialEmail" DBTrigger="check-ReadyForInitialEmail">
+      <Step Name="Send-EmailWithAllParameters" FailureSequence="RequiresAssistance" Parameters="template InitialEmail" />   <Step Name="Set-WorkItemStateToNow" Parameters="NextWorkitemState Scheduled,InitialEmailWasJustSent True" />
+    </MigrationSequence>
+
+    <!--Setting the status of workitem to RequiresAssistance-->
+    <MigrationSequence Name="SetInvalidWorkitmesTo-RequiresAssistance" DBTrigger="Check-IsWorkItemInvalid">  <Step Name="Set-WorkItemStateToNow" Parameters="NextWorkitemState RequiresAssistance" />
+    </MigrationSequence>
+
+  </MigrationAutomation>
+  <MigrationAutomation FarmName="http://SharePointASIA" WebAppID="1AFCA5F5-E2DE-49C4-8C0A-A5DA56C3D5D8">
+    
+    <MigrationSequence Name="FinalEmail" DBTrigger="check-ReadyForFinalEmail">
+      <Step Name="Send-EmailWithAllParameters" FailureSequence="RequiresAssistance" Parameters="template FinalEmail" />
+      <Step Name="Set-MigrationCompleteToNow" />
+    </MigrationSequence>
+
+    <MigrationSequence Name="InitialEmail" DBTrigger="check-ReadyForInitialEmail">
+      <Step Name="Send-EmailWithAllParameters" FailureSequence="RequiresAssistance" Parameters="template InitialEmail" />   <Step Name="Set-WorkItemStateToNow" Parameters="NextWorkitemState Scheduled,InitialEmailWasJustSent True" />
+    </MigrationSequence>
+
+    <!--Setting the status of workitem to RequiresAssistance-->
+    <MigrationSequence Name="SetInvalidWorkitmesTo-RequiresAssistance" DBTrigger="Check-IsWorkItemInvalid">  <Step Name="Set-WorkItemStateToNow" Parameters="NextWorkitemState RequiresAssistance" />
+    </MigrationSequence>
+
+  </MigrationAutomation>
+
+  <MigrationAutomation FarmName="http://Team" WebAppID="309A68E1-A464-4B00-9DDD-C725C75C780C">
+    
+    <MigrationSequence Name="FinalEmail" DBTrigger="check-ReadyForFinalEmail">
+      <Step Name="Send-EmailWithAllParameters" FailureSequence="RequiresAssistance" Parameters="template FinalEmail" />
+      <Step Name="Set-MigrationCompleteToNow" />
+    </MigrationSequence>
+
+    <MigrationSequence Name="InitialEmail" DBTrigger="check-ReadyForInitialEmail">
+      <Step Name="Send-EmailWithAllParameters" FailureSequence="RequiresAssistance" Parameters="template InitialEmail" />   <Step Name="Set-WorkItemStateToNow" Parameters="NextWorkitemState Scheduled,InitialEmailWasJustSent True" />
+    </MigrationSequence>
+
+    <!--Setting the status of workitem to RequiresAssistance-->
+    <MigrationSequence Name="SetInvalidWorkitmesTo-RequiresAssistance" DBTrigger="Check-IsWorkItemInvalid">  <Step Name="Set-WorkItemStateToNow" Parameters="NextWorkitemState RequiresAssistance" />
+    </MigrationSequence>
+
+  </MigrationAutomation>
+
+  <MigrationAutomation FarmName="http://SharePoint" WebAppID="74A5C7A2-2560-4A4C-8AC9-3B5231834114">
+ 
+    <MigrationSequence Name="FinalEmail" DBTrigger="check-ReadyForFinalEmail">
+      <Step Name="Send-EmailWithAllParameters" FailureSequence="RequiresAssistance" Parameters="template FinalEmail" />
+      <Step Name="Set-MigrationCompleteToNow" />
+    </MigrationSequence>
+
+    <MigrationSequence Name="InitialEmail" DBTrigger="check-ReadyForInitialEmail">
+      <Step Name="Send-EmailWithAllParameters" FailureSequence="RequiresAssistance" Parameters="template InitialEmail" />   <Step Name="Set-WorkItemStateToNow" Parameters="NextWorkitemState Scheduled,InitialEmailWasJustSent True" />
+    </MigrationSequence>
+
+    <!--Setting the status of workitem to RequiresAssistance-->
+    <MigrationSequence Name="SetInvalidWorkitmesTo-RequiresAssistance" DBTrigger="Check-IsWorkItemInvalid">  <Step Name="Set-WorkItemStateToNow" Parameters="NextWorkitemState RequiresAssistance" />
+    </MigrationSequence>
+
+  </MigrationAutomation>
+  <FailureSequences>
+    <FailureSequence Name="RequiresAssistance">
+      <Step Name="Set-WorkItemStateToNow" Parameters="NextWorkitemState RequiresAssistance" />
+    </FailureSequence>
+  </FailureSequences>
+</MigrationAutomationConfiguration>

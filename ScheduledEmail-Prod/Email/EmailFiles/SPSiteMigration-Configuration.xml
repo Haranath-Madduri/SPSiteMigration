@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE MigrationAutomationConfiguration[]>
+<MigrationAutomationConfiguration>
+  <GlobalSettings>
+    <Databases>
+      <Database Name="Migration_Coordinator" ConnectionString="Server=mfha6tk8ej.database.windows.net;Database=Migration_Coordinator_Dev; UID=$($UserName);password=$($Password); Integrated Security=$false;Connect Timeout=180;">
+        <EncryptedAccount UserName="REDMOND\SAM-THE-GREY\v-marcn" AccountName="MigrationDev" Password="01000000d08c9ddf0115d1118c7a00c04fc297eb01000000b3cb1cabf7e55f459e70c275a95543f20000000002000000000003660000c000000010000000805d7c7d544dbe794785777706e5ec240000000004800000a000000010000000b8b4c18ac9648f4e5e3de868c34c85f02000000061c16281bdbc07bc7ac4447a57853faeee9b67ae60afaf9dd51db59480311184140000001402d64572a4b758ef76ffd6137551c2bd4e14ed" />
+        <EncryptedAccount UserName="REDMOND\V-NAVSH\v-navsh" AccountName="MigrationDev" Password="01000000d08c9ddf0115d1118c7a00c04fc297eb010000002f7707ee17d19e4bb50014f1da38c98f0000000002000000000003660000c000000010000000b1cdc36eb5b61e151436d6302909a3cb0000000004800000a0000000100000004982e39c8113dae390ea8805202b1751200000003636c7a6e18b386a6c984118d51d15beda7b2ff4f976e02755bcc1caa6713748140000004e073c26a28ebf93a1d67c07896a1d06e50b0700" />
+      </Database>
+    </Databases>
+    <SMTP HostName="SMTPHOST" FromEmail="v-navsh@microsoft.com" AccountName="REDMOND\v-navsh">
+      <EncryptedAccount UserName="REDMOND\SAM-THE-GREY\v-marcn" Password="01000000d08c9ddf0115d1118c7a00c04fc297eb010000002f7707ee17d19e4bb50014f1da38c98f0000000002000000000003660000c000000010000000f7aa93d9d1f2ba15e707dd755e19a83d0000000004800000a0000000100000003f95266de212ec9afd154f0a1f368d1218000000e58922e54adc005b6fcaf07a05fda02b0973dfab8f3eeb4f140000003f4e9732be27c8bb829902c1a54b493fe5118f84" />
+      <EncryptedAccount UserName="REDMOND\V-NAVSH\v-navsh" Password="01000000d08c9ddf0115d1118c7a00c04fc297eb010000002f7707ee17d19e4bb50014f1da38c98f0000000002000000000003660000c000000010000000f7aa93d9d1f2ba15e707dd755e19a83d0000000004800000a0000000100000003f95266de212ec9afd154f0a1f368d1218000000e58922e54adc005b6fcaf07a05fda02b0973dfab8f3eeb4f140000003f4e9732be27c8bb829902c1a54b493fe5118f84" />
+    </SMTP>
+  </GlobalSettings>
+  <!--<MigrationAutomation FarmName="http://SharePoint" WebAppID="74A5C7A2-2560-4A4C-8AC9-3B5231834114">
+    <Databases>
+      <Database Name="URLRedirectDB" ConnectionString="Server=SMTSQL02;Database=URLRedirectDB;Integrated Security=True"/>
+    </Databases>
+  </MigrationAutomation>
+  <MigrationAutomation FarmName="http://SharePointEMEA" WebAppID="AAD0F941-DB37-40B0-83E8-8FD4915E2864">
+    <Databases>
+      <Database Name="URLRedirectDB" ConnectionString="Server=SMTSQL02;Database=URLRedirectDB;Integrated Security=True"/>
+    </Databases>
+  </MigrationAutomation>
+  <MigrationAutomation FarmName="http://SharePointASIA" WebAppID="1AFCA5F5-E2DE-49C4-8C0A-A5DA56C3D5D8">
+    <Databases>
+      <Database Name="URLRedirectDB" ConnectionString="Server=SINSQL02;Database=URLRedirectDB;Integrated Security=True"/>
+    </Databases>
+  </MigrationAutomation>
+    <MigrationAutomation FarmName="http://Team" WebAppID="309A68E1-A464-4B00-9DDD-C725C75C780C"/>
+  -->
+  <MigrationAutomation FarmName="http://windows-drn96u1" WebAppID="309A68E1-A464-4B00-9DDD-C725C75C780C">
+    <Settings>
+      <Databases>
+        <!-- <Database Name="URLRedirectDB" ConnectionString="Server=SPSCFGSQL01;Database=URLRedirectDB;Integrated Security=True"/> -->
+        <Database Name="URLRedirectDB" ConnectionString="Server=localhost;Database=URLRedirectDB;Integrated Security=True" />
+      </Databases>
+      <Servers>
+        <Server Name="windows-DRN96U1" />
+      </Servers>
+      <EncryptedAccount UserName="redmond\v-marcn" Password="01000000d08c9ddf0115d1118c7a00c04fc297eb010000001cf3a1b98486a34c9e7691ef77812f120000000002000000000003660000c0000000100000000c8f04cafe2189eb2b16e941c56111cc0000000004800000a00000001000000075fa6bf0b777ca413dd16874086cab311800000068a8770c8bc773f56af8b6f62332bae68ff3dca180632f5f140000008e5eb1ae17634e01990f899a94f8526d4d0213fa" />
+    </Settings>
+    <MigrationSequence Name="FinalEmail" DBTrigger="check-ReadyForFinalEmail">
+      <Step Name="Send-EmailWithAllParameters" FailureSequence="EmailNotSent" Parameters="template InitialEmail" />
+    </MigrationSequence>
+  </MigrationAutomation>
+  <MigrationAutomation FarmName="http://SharePoint" WebAppID="74A5C7A2-2560-4A4C-8AC9-3B5231834114">
+    <Settings>
+      <Databases>
+        <!-- <Database Name="URLRedirectDB" ConnectionString="Server=SPSCFGSQL01;Database=URLRedirectDB;Integrated Security=True"/> -->
+        <Database Name="URLRedirectDB" ConnectionString="Server=localhost;Database=URLRedirectDB;Integrated Security=True" />
+      </Databases>
+      <Servers>
+        <Server Name="windows-DRN96U1" />
+      </Servers>
+      <EncryptedAccount UserName="redmond\v-marcn" Password="01000000d08c9ddf0115d1118c7a00c04fc297eb010000001cf3a1b98486a34c9e7691ef77812f120000000002000000000003660000c0000000100000000c8f04cafe2189eb2b16e941c56111cc0000000004800000a00000001000000075fa6bf0b777ca413dd16874086cab311800000068a8770c8bc773f56af8b6f62332bae68ff3dca180632f5f140000008e5eb1ae17634e01990f899a94f8526d4d0213fa" />
+    </Settings>
+
+    <!--<MigrationSequence Name="InitialEmail" DBTrigger="check-ReadyForInitialEmail">
+      <Step Name="Send-EmailWithAllParameters" FailureSequence="RequiresAssistance" Parameters="template InitialEmail" />
+      <Step Name="Execute-UpdateWorkItemState" Parameters="NewWorkitemState Provisioning,ProcessingServer $env:computername,ProcessEnded $(Get-Date),InitialCommsSendDateUTC $(Get-Date)" />
+    </MigrationSequence>
+
+    <MigrationSequence Name="FinalEmail" DBTrigger="check-ReadyForFinalEmail">
+      <Step Name="Send-EmailWithAllParameters" FailureSequence="RequiresAssistance" Parameters="template FinalEmail" />
+      <Step Name="Execute-CompleteSiteMigration" Parameters="FinalEmailSendDateUTC $(Get-Date)" />
+    </MigrationSequence>-->
+
+    <!--<MigrationSequence Name="DescheduledEmail" DBTrigger="check-ReadyForDescheduledEmail">
+      <Step Name="Send-EmailWithAllParameters" FailureSequence="RequiresAssistance" Parameters="template DescheduledEmail" />
+    </MigrationSequence>-->
+
+    <!--<MigrationSequence Name="DelayedEmail" DBTrigger="check-ReadyForDelayedEmail">
+      <Step Name="Send-EmailWithAllParameters" FailureSequence="RequiresAssistance" Parameters="template DelayedEmail" />
+    </MigrationSequence>-->
+
+    <MigrationSequence Name="RollBackEmail" DBTrigger="check-ReadyForRollBackEmail">
+      <Step Name="Send-EmailWithAllParameters" FailureSequence="RequiresAssistance" Parameters="template RollBackEmail" />
+    </MigrationSequence>
+
+  </MigrationAutomation>
+  <FailureSequences>
+    <FailureSequence Name="RequiresAssistance">
+      <Step Name="Execute-UpdateWorkItemState" Parameters="NewWorkitemState RequiresAssistance,ProcessingServer $env:computername,ProcessEnded $(Get-Date)" />
+    </FailureSequence>
+    <FailureSequence Name="EmailNotSent">
+      <Step Name="Send-EmailNotSent" />
+      <Step Name="Resume-NextStep" />
+    </FailureSequence>
+    <FailureSequence Name="MigrationOnHoldUntilManualAction">
+      <Step Name="Send-ConfigMigratonIssue" />
+      <Step Name="Suspend-ManualInterventionRequired" />
+      <Step Name="Resume-MigrationStep" />
+    </FailureSequence>
+    <FailureSequence Name="ExportFailure">
+      <Step Name="Send-MigratonFailure" />
+      <Step Name="Stop-MigrationProcess" />
+    </FailureSequence>
+    <FailureSequence Name="ImportFailure">
+      <Step Name="Send-MigratonFailure" />
+      <Step Name="Stop-MigrationProcess" />
+    </FailureSequence>
+    <FailureSequence Name="AutomationFailure">
+      <Step Name="Send-AutomationFailure" />
+      <Step Name="Stop-MigrationProcess" />
+    </FailureSequence>
+    <FailureSequence Name="IgnoreError">
+      <Step Name="Resume-NextStep" />
+    </FailureSequence>
+  </FailureSequences>
+</MigrationAutomationConfiguration>

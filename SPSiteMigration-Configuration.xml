@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE MigrationAutomationConfiguration[]>
+<MigrationAutomationConfiguration>
+  <GlobalSettings>
+    <Databases>
+      <Database Name="Migration_Coordinator" ConnectionString="Server=mfha6tk8ej.database.windows.net;Database=Migration_Coordinator; UID=$($UserName);password=$($Password); Integrated Security=$false;Connect Timeout=180;"/>
+    </Databases>
+    <Transformations/>
+    <SMTP HostName="SMTPHOST" FromEmail="SPOMComm@microsoft.com"/>
+    <AutomationData DaysInAdvance="0" MultiThreaded="True" Logging="true">
+    </AutomationData>
+    <Destination FarmName="https://microsoft.sharepoint.com">
+      <TenantSite Name="https://microsoft-admin.sharepoint.com"/>
+    </Destination>
+  </GlobalSettings>
+  <MigrationAutomation FarmName="http://SharePoint" WebAppID="74A5C7A2-2560-4A4C-8AC9-3B5231834114">
+    <Settings>
+      <Databases>
+        <Database Name="URLRedirectDB" ConnectionString="Server=localhost;Database=URLRedirectDB;Integrated Security=True" />
+      </Databases>
+      <Servers>
+        <Server Name="TK5-SPAPP-01" />
+      </Servers>
+      <Azure StorageAccount="msitmigrationus.blob.core.windows.net" PrimaryAccessKey="acKkVjHfWHbOkdV3vxot/Dj/0Z884QNcQaRzEXXZMexjdovaDj5386jkJMIXwI3FzSOZw3BUmWwhLJyPoi6QpA==" />
+    </Settings>
+    <MigrationSequence Name="Start Site Migration" DBTrigger="check-ReadyForMigrationAutomation">
+      <Step Name="Set-WorkItemStateToNow" Parameters="NextWorkitemState Migrating" FailureSequence="GiveUp" />
+      <Step Name="Set-SiteReadOnly" FailureSequence="RequiresAssistance" Retry="2" />
+      <Step Name="Verify-SiteReadOnly" FailureSequence="RequiresAssistance" Retry="0" />
+      <Step Name="Export-Site" FailureSequence="RequiresAssistance" />
+      <Step Name="Verify-ExportSite" FailureSequence="RequiresAssistance" />
+      <Step Name="Transform-Package" FailureSequence="RequiresAssistance" />
+      <Step Name="Upload-Package" FailureSequence="RequiresAssistance" />
+    </MigrationSequence>
+  </MigrationAutomation>
+  <MigrationAutomation FarmName="http://SharePointASIA" WebAppID="1AFCA5F5-E2DE-49C4-8C0A-A5DA56C3D5D8">
+    <Settings>
+      <Databases>
+        <Database Name="URLRedirectDB" ConnectionString="Server=SINSQL02;Database=URLRedirectDB;Integrated Security=True" />
+      </Databases>
+      <Servers>
+        <Server Name="SIN-SPAPP-01" />
+      </Servers>
+      <Azure StorageAccount="msitmigrationap.blob.core.windows.net" PrimaryAccessKey="0St/oXHtRMapwGHnW9b6Pxji+X0IUyn8D4e0/d9EX0XNatKTnGMGgmOW5MT53DOXv0sC2+/MGsg/ym4zUqxYXA==" />
+    </Settings>
+    <MigrationSequence Name="Start Site Migration" DBTrigger="check-ReadyForMigrationAutomation">
+      <Step Name="Set-WorkItemStateToNow" Parameters="NextWorkitemState Migrating" FailureSequence="GiveUp" />
+      <Step Name="Set-SiteReadOnly" FailureSequence="RequiresAssistance" Retry="2" />
+      <Step Name="Verify-SiteReadOnly" FailureSequence="RequiresAssistance" Retry="0" />
+      <Step Name="Export-Site" FailureSequence="RequiresAssistance" />
+      <Step Name="Verify-ExportSite" FailureSequence="RequiresAssistance" />
+      <Step Name="Transform-Package" FailureSequence="RequiresAssistance" />
+      <Step Name="Upload-Package" FailureSequence="RequiresAssistance" />
+    </MigrationSequence>
+  </MigrationAutomation>
+  <MigrationAutomation FarmName="http://SharePointEMEA" WebAppID="AAD0F941-DB37-40B0-83E8-8FD4915E2864">
+    <Settings>
+      <Databases>
+        <Database Name="URLRedirectDB" ConnectionString="Server=SINSQL02;Database=URLRedirectDB;Integrated Security=True" />
+      </Databases>
+      <Servers>
+        <Server Name="DB3-SPAPP-02" />
+      </Servers>
+      <Azure StorageAccount="msitmigrationeu.blob.core.windows.net" PrimaryAccessKey="+TCHZGgTBjUVVAgROv2HYMPDZcLqB5JpcVtnZsZMFNd9ELLIXH3gsAB/y2SC16OK/qxZxCJPi1Vyx/KgCyJYuQ==" />
+    </Settings>
+    <MigrationSequence Name="Start Site Migration" DBTrigger="check-ReadyForMigrationAutomation">
+      <Step Name="Set-WorkItemStateToNow" Parameters="NextWorkitemState Migrating" FailureSequence="GiveUp" />
+      <Step Name="Set-SiteReadOnly" FailureSequence="RequiresAssistance" Retry="2" />
+      <Step Name="Verify-SiteReadOnly" FailureSequence="RequiresAssistance" Retry="0" />
+      <Step Name="Export-Site" FailureSequence="RequiresAssistance" />
+      <Step Name="Verify-ExportSite" FailureSequence="RequiresAssistance" />
+      <Step Name="Transform-Package" FailureSequence="RequiresAssistance" />
+      <Step Name="Upload-Package" FailureSequence="RequiresAssistance" />
+    </MigrationSequence>
+  </MigrationAutomation>
+  <MigrationAutomation FarmName="http://Team" WebAppID="309A68E1-A464-4B00-9DDD-C725C75C780C">
+    <Settings>
+      <Databases>
+        <Database Name="URLRedirectDB" ConnectionString="Server=SPSCFGSQL01;Database=URLRedirectDB;Integrated Security=True"/>
+      </Databases>
+      <Servers>
+        <Server Name="SomeAppServer" />
+      </Servers>
+    </Settings>
+    <MigrationSequence Name="Start Site Migration" DBTrigger="check-ReadyForMigrationAutomation">
+      <Step Name="Set-WorkItemStateToNow" Parameters="NextWorkitemState Migrating" FailureSequence="GiveUp" />
+      <Step Name="Set-SiteReadOnly" FailureSequence="RequiresAssistance" Retry="2" />
+      <Step Name="Verify-SiteReadOnly" FailureSequence="RequiresAssistance" Retry="0" />
+      <Step Name="Export-Site" FailureSequence="RequiresAssistance" />
+      <Step Name="Verify-ExportSite" FailureSequence="RequiresAssistance" />
+      <Step Name="Transform-Package" FailureSequence="RequiresAssistance" />
+      <Step Name="Upload-Package" FailureSequence="RequiresAssistance" />
+    </MigrationSequence>
+  </MigrationAutomation>
+  <FailureSequences>
+    <FailureSequence Name="RequiresAssistance">
+      <Step Name="Set-WorkItemStateToNow" Parameters="NextWorkitemState RequiresAssistance" />
+    </FailureSequence>
+    <FailureSequence Name="GiveUp" />
+  </FailureSequences>
+</MigrationAutomationConfiguration>

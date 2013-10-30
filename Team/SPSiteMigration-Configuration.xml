@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE MigrationAutomationConfiguration>
+<MigrationAutomationConfiguration>
+  <GlobalSettings>
+    <Databases>
+      <Database Name="Migration_Coordinator" ConnectionString="Server=localhost;Database=Migration_Coordinator;Integrated Security=True"/>
+    </Databases>
+  </GlobalSettings>
+  
+  <MigrationAutomation FarmName="http://Team" WebAppID="309A68E1-A464-4B00-9DDD-C725C75C780C">
+    <Settings>
+      <Databases>
+        <!-- <Database Name="URLRedirectDB" ConnectionString="Server=SPSCFGSQL01;Database=URLRedirectDB;Integrated Security=True"/> -->
+        <Database Name="URLRedirectDB" ConnectionString="Server=localhost;Database=URLRedirectDB;Integrated Security=True"/>
+      </Databases>
+    </Settings>
+    <MigrationSequence Name="TestSequence" DBTrigger="check-PerformingTest">
+      <Step Name="Send-Email"             FailureSequence="EmailNotSent"/>
+    </MigrationSequence>
+    <MigrationSequence Name="InitialEmail" DBTrigger="check-ReadyForInitialEmail">                  <!-- “Scheduled Migration” WorkItemType = 1 -->
+      <Step Name="Send-Email"			        FailureSequence="EmailNotSent" Paramters="-template Initial"/> <!-- Pre: RequiresMigrationScheduledComms, Post: StartingMigrationCommsSendDateUTC -->
+      <Step Name="Test-AdminsEmail"	            FailureSequence="EmailNotSent" Paramters="-template Initial"/> <!-- Look to the inbox and see if the BCC arrives Post: Scheduled -->
+      <Step Name="Test-AutomationData"          FailureSequence="MigrationOnHoldUntilManualAction"/>
+    </MigrationSequence>
+    <MigrationSequence Name="Export" DBTrigger="check-ReadyForExport">                                     <!-- Perform in the timeframe given -->
+      <Step Name="Start-MigrationProcess"       FailureSequence="MigrationOnHoldUntilManualAction"/>
+      <Step Name="Test-AutomationData"	        FailureSequence="MigrationOnHoldUntilManualAction"/>
+      <Step Name="Set-SiteAsReadOnly"			      FailureSequence="ExportFailure"/>                     <!--  -->
+      <Step Name="Verify-SiteAsReadOnly"			  FailureSequence="ExportFailure"/>
+      <Step Name="Export-SiteData"			        FailureSequence="ExportFailure"/>                     <!-- Pre: Exporting -->
+      <Step Name="Test-SiteDataExport"          FailureSequence="ExportFailure"/>                     <!-- Pre: VerifyingExport, Sucess: Exported -->
+      <Step Name="Convert-SiteData"	            FailureSequence="ExportFailure"/>                     <!-- Pre: Transforming -->
+      <Step Name="Test-SiteDataConversion"      FailureSequence="ExportFailure"/>                     <!-- Pre: VerifyingTransforms, Sucess: Transformed -->
+      <Step Name="Send-SiteData"			          FailureSequence="MigrationOnHoldUntilManualAction"/>  <!-- Pre: Uploading -->
+      <Step Name="Test-SiteDataSend"			      FailureSequence="MigrationOnHoldUntilManualAction"/>  <!-- Pre: VerifyingUpload, Sucess: Uploaded -->
+    </MigrationSequence>
+    <MigrationSequence Name="Workflows" DBTrigger="check-Imported">
+      <Step Name="Export-Workflows"			        FailureSequence="MigrationOnHoldUntilManualAction"/>  <!-- Pre: MigratingWorkflows -->
+      <Step Name="Test-WorkflowExport"          FailureSequence="MigrationOnHoldUntilManualAction"/>  <!-- Pre: ValidatingWorkflows, Sucess: MigratedWorkflows -->
+    </MigrationSequence>
+    <MigrationSequence Name="Import" DBTrigger="check-Uploaded">
+      <Step Name="Receive-SiteData"			        FailureSequence="ImportFailure"/>                     <!-- Pre: Downloading -->
+      <Step Name="Test-SiteDataDownload"		    FailureSequence="ImportFailure"/>                     <!-- Pre: VerifyingDownload, Sucess: Downloaded -->
+      <Step Name="New-Provision"					      FailureSequence="ImportFailure"/>                     <!-- Pre: Provisioning -->
+      <Step Name="Test-Provisions"			        FailureSequence="ImportFailure"/>                     <!-- Pre: VerifyingProvisions, Sucess: Provisioned -->
+      <Step Name="Import-SiteData"				      FailureSequence="ImportFailure"/>                     <!-- Pre: Importing -->
+      <Step Name="Test-SiteDataImport"				  FailureSequence="ImportFailure"/>                     <!-- Pre: VerifyingImport, Sucess: Imported -->
+    </MigrationSequence>
+    <MigrationSequence Name="Upgrade" DBTrigger="check-MigratedWorkflows">
+      <Step Name="Upgrade-Site"					        FailureSequence="MigrationOnHoldUntilManualAction"/>  <!-- Pre: Upgrading -->
+      <Step Name="Test-SiteUpgrade"			        FailureSequence="MigrationOnHoldUntilManualAction"/>  <!-- Pre: VerifyingUpgrade, Sucess: Upgraded -->
+    </MigrationSequence>
+    <MigrationSequence Name="Finalizing" DBTrigger="check-Upgraded">                                  <!-- RequiresRedirect -->
+      <Step Name="Enable-Redirect"			        FailureSequence="MigrationOnHoldUntilManualAction"/>  <!-- Pre: ApplyingRedirect -->
+      <Step Name="Test-RedirectEnable"	        FailureSequence="MigrationOnHoldUntilManualAction"/>  <!-- Pre: VerifyingRedirect, Sucess: RedirectApplied -->
+      <Step Name="Send-Email"			        FailureSequence="EmailNotSent" Paramters="-template Final"/> <!-- Pre: RequiresMigrationCompletedComms, RequiresMigrationDelayedComms -->
+      <Step Name="Test-AdminsEmail"		          FailureSequence="EmailNotSent" Paramters="-template Final"/> <!-- Look to the inbox and see if the BCC arrives -->
+      <Step Name="Stop-MigrationProcess" />
+    </MigrationSequence>
+    <MigrationSequence Name="Rollback" DBTrigger="check-RequestedRollback">                           <!-- “Requested Rollback” WorkItemType = 2 -->
+      <Step Name="Suspend-MigrationProcess"			FailureSequence="MigrationOnHoldUntilManualAction"/>  <!-- Pre: Suspending Migration Process, Sucess: MigratonKilled -->
+      <Step Name="Disable-Redirect"		          FailureSequence="MigrationOnHoldUntilManualAction"/>  <!-- Pre: DisablingRedirect -->
+      <Step Name="Test-RedirectDisable"		      FailureSequence="MigrationOnHoldUntilManualAction"/>  <!-- Pre: VerifyingNoRedirect, Sucess: RedirectDisabled -->
+      <Step Name="Suspend-Schedule"				      FailureSequence="MigrationOnHoldUntilManualAction"/>  <!-- Pre: DeScheduling, Sucess: DeScheduled -->
+      <Step Name="Send-Email"			        FailureSequence="EmailNotSent" Paramters="-template Rollback"/> <!-- Pre: RequiresMigrationCompletedComms, RequiresMigrationDelayedComms -->
+      <Step Name="Test-AdminsEmail"   			    FailureSequence="EmailNotSent" Paramters="-template Rollback"/> <!-- Look to the inbox and see if the BCC arrives -->
+      <Step Name="Stop-MigrationProcess" />
+    </MigrationSequence>
+    <MigrationSequence Name="Delist" DBTrigger="check-ScheduledDelist">                                <!-- RequiresMigrationDelistedComms -->
+      <Step Name="Suspend-Schedule"			        FailureSequence="IgnoreError"/>                       <!-- Shouldn't Need, but just in case -->
+      <Step Name="Suspend-MigrationProcess"			FailureSequence="IgnoreError"/>                       <!-- Shouldn't Need, but just in case -->
+      <Step Name="Send-Email"			        FailureSequence="EmailNotSent" Paramters="-template Delist"/> <!-- Pre: DelistingFromMigration -->
+      <Step Name="Test-AdminsEmail"   			    FailureSequence="EmailNotSent" Paramters="-template Delist"/> <!-- Pre: ValidatingDeleistedFromMigration Post: DelistedFromMigration-->
+      <Step Name="Stop-MigrationProcess" />
+    </MigrationSequence>
+  </MigrationAutomation>
+  <FailureSequences>
+    <FailureSequence Name="EmailNotSent">
+      <Step Name="Send-EmailNotSent"/>
+      <Step Name="Resume-NextStep"/>
+    </FailureSequence>
+    <FailureSequence Name="MigrationOnHoldUntilManualAction">
+      <Step Name="Send-ConfigMigratonIssue"/>
+      <Step Name="Suspend-ManualInterventionRequired"/>
+      <Step Name="Resume-MigrationStep"/>
+    </FailureSequence>
+    <FailureSequence Name="ExportFailure">
+      <Step Name="Send-MigratonFailure"/>
+      <Step Name="Stop-MigrationProcess"/>
+    </FailureSequence>
+    <FailureSequence Name="ImportFailure">
+      <Step Name="Send-MigratonFailure"/>
+      <Step Name="Stop-MigrationProcess"/>
+    </FailureSequence>
+    <FailureSequence Name="AutomationFailure">
+      <Step Name="Send-AutomationFailure"/>
+      <Step Name="Stop-MigrationProcess"/>
+    </FailureSequence>
+    <FailureSequence Name="IgnoreError">
+      <Step Name="Resume-NextStep"/>
+    </FailureSequence>  
+  </FailureSequences>
+</MigrationAutomationConfiguration>
